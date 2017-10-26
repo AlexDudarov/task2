@@ -36,8 +36,9 @@ public class Parser {
                     }
 
                     stringBuilder.setLength(0);
-                    stringBuilder.append(c);
+
                 }
+                stringBuilder.append(c);
 
                 if (c == '>') {
 

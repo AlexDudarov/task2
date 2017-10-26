@@ -20,7 +20,10 @@ public class Formatter {
         String value = entity.getValue();
         Map<String, String> attributes = entity.getAttributes();
         List<Entity> children = entity.getChildren();
+
+
         boolean isProperty = !(value == null) && attributes.isEmpty();
+
         String tab = "";
 
         for (int i = 0; i <= level; i++) {
