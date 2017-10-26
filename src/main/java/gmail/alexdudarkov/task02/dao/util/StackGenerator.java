@@ -1,6 +1,8 @@
 package gmail.alexdudarkov.task02.dao.util;
 
 
+import gmail.alexdudarkov.task02.dao.exception.DAOException;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,7 +23,7 @@ public class StackGenerator {
     private static final String SINGLE_TAG = "<([A-Za-z]|_|:).*/>";
 
 
-    public List<MetaEntity> createStack(List<String> xmlData) {
+    public List<MetaEntity> createStack(List<String> xmlData) throws DAOException {
 
         List<MetaEntity> metaEntities = new ArrayList<>();
 
@@ -33,21 +35,21 @@ public class StackGenerator {
 
                 entity = createOpenTagEntity(tagData);
                 metaEntities.add(entity);
-
+                continue;
             }
 
             if (tagData.matches(CLOSE_TAG)) {
 
                 entity = createCloseTagEntity();
                 metaEntities.add(entity);
-
+                continue;
             }
 
             if (tagData.matches(SINGLE_TAG)) {
 
                 entity = createSingleTagEntity(tagData);
                 metaEntities.add(entity);
-
+                continue;
             }
 
             if (tagData.matches(VALUE)) {

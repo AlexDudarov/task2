@@ -22,24 +22,13 @@ public class Parser {
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
 
-            boolean tagStart = false;
-            boolean valueStart = false;
-
             StringBuilder stringBuilder = new StringBuilder();
             char c;
             do {
                 line = reader.read();
                 c = (char) line;
 
-
-                if (!tagStart) {
-                    if (c != ' ') {
-                        valueStart = true;
-                    }
-                }
-
                 if (c == '<' || line == -1) {
-
                     String value = stringBuilder.toString().trim();
 
                     if (!value.isEmpty()) {
@@ -47,7 +36,7 @@ public class Parser {
                     }
 
                     stringBuilder.setLength(0);
-                    tagStart = true;
+                    stringBuilder.append(c);
                 }
 
                 if (c == '>') {
@@ -55,24 +44,14 @@ public class Parser {
                     stringBuilder.append(c);
                     list.add(stringBuilder.toString().trim());
                     stringBuilder.setLength(0);
-                    tagStart = false;
 
-                }
-
-                if (tagStart) {
-                    valueStart   = false;
-                    stringBuilder.append(c);
-                }
-
-                if (valueStart) {
-                    stringBuilder.append(c);
                 }
 
             } while (line != -1);
 
 
         } catch (IOException e) {
-          throw new DAOException(e);
+            throw new DAOException(e);
         }
         return list;
     }
