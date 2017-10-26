@@ -1,8 +1,8 @@
 package gmail.alexdudarkov.task02.dao.util;
 
 
+import gmail.alexdudarkov.task02.dao.exception.DAOException;
 import gmail.alexdudarkov.task02.dao.model.Entity;
-import gmail.alexdudarkov.task02.dao.model.MetaEntity;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -13,12 +13,13 @@ public class Builder {
   private Deque<Entity> entities = new ArrayDeque<>();
 
 
-    public Entity build(List<MetaEntity> metaEntities) {
+    public Entity build(List<MetaEntity> metaEntities) throws DAOException {
 
         openTag(metaEntities.get(0));
 
         for (int i = 1; i < metaEntities.size() - 1; i++) {
             MetaEntity metaEntity = metaEntities.get(i);
+
             switch (metaEntity.getTagType()) {
 
                 case VALUE: {
@@ -42,8 +43,8 @@ public class Builder {
                 }
 
                 default: {
-                    System.out.println("Ошибка");
-                    break;
+
+                    throw new DAOException("unknown tag in xml document");
                 }
 
             }

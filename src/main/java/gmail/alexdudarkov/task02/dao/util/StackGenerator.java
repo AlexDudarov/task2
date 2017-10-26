@@ -1,9 +1,6 @@
 package gmail.alexdudarkov.task02.dao.util;
 
 
-import gmail.alexdudarkov.task02.dao.model.MetaEntity;
-import gmail.alexdudarkov.task02.dao.model.TagType;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,9 +10,9 @@ import java.util.regex.Pattern;
 
 public class StackGenerator {
 
-    private static final Pattern TAG_NAME_PATTERN=Pattern.compile("<[/\\s]?([^\\s>/]*)[\\s>/]");
-    private static final Pattern ATTRIBUTE_NAME_PATTERN=Pattern.compile("(\\S*)\\s*=");
-    private static final Pattern ATTRIBUTE_VALUE_PATTERN=Pattern.compile("=\\s*['|\"]([^'\"]*)['|\"]");
+    private static final Pattern TAG_NAME_PATTERN = Pattern.compile("<[/\\s]?([^\\s>/]*)[\\s>/]");
+    private static final Pattern ATTRIBUTE_NAME_PATTERN = Pattern.compile("(\\S*)\\s*=");
+    private static final Pattern ATTRIBUTE_VALUE_PATTERN = Pattern.compile("=\\s*['|\"]([^'\"]*)['|\"]");
 
 
     private static final String OPEN_TAG = "<([A-Za-z]|_|:).*[^/]>";
@@ -23,48 +20,40 @@ public class StackGenerator {
     private static final String VALUE = "[^<].*";
     private static final String SINGLE_TAG = "<([A-Za-z]|_|:).*/>";
 
-    private List<MetaEntity> metaEntities = new ArrayList<>();
 
+    public List<MetaEntity> createStack(List<String> xmlData) {
 
-    public List<MetaEntity> createStack(List<String> list) {
+        List<MetaEntity> metaEntities = new ArrayList<>();
 
         MetaEntity entity;
-        for (String str : list) {
 
-            if (str.matches(OPEN_TAG)) {
+        for (String tagData : xmlData) {
 
-                entity = new MetaEntity();
-                entity.setMap(parseAttributes(str));
-                entity.setValue(parseName(str));
-                entity.setTagType(TagType.OPEN_TAG);
+            if (tagData.matches(OPEN_TAG)) {
+
+                entity = createOpenTagEntity(tagData);
                 metaEntities.add(entity);
 
             }
 
-            if (str.matches(CLOSE_TAG)) {
+            if (tagData.matches(CLOSE_TAG)) {
 
-                entity = new MetaEntity();
-                entity.setTagType(TagType.CLOSE_TAG);
+                entity = createCloseTagEntity();
                 metaEntities.add(entity);
 
             }
 
-            if (str.matches(SINGLE_TAG)) {
+            if (tagData.matches(SINGLE_TAG)) {
 
-                entity = new MetaEntity();
-                entity.setMap(parseAttributes(str));
-                entity.setValue(parseName(str));
-                entity.setTagType(TagType.SINGLE_TAG);
+                entity = createSingleTagEntity(tagData);
                 metaEntities.add(entity);
 
             }
 
-            if (str.matches(VALUE)) {
+            if (tagData.matches(VALUE)) {
 
 
-                entity = new MetaEntity();
-                entity.setValue(str);
-                entity.setTagType(TagType.VALUE);
+                entity = createValueEntity(tagData);
                 metaEntities.add(entity);
 
             }
@@ -72,7 +61,46 @@ public class StackGenerator {
         return metaEntities;
     }
 
-    public static Map<String, String> parseAttributes(String data) {
+
+    private MetaEntity createValueEntity(String data) {
+
+        MetaEntity metaEntity = new MetaEntity();
+        metaEntity.setValue(data);
+        metaEntity.setTagType(TagType.VALUE);
+
+        return metaEntity;
+    }
+
+    private MetaEntity createCloseTagEntity() {
+
+        MetaEntity metaEntity = new MetaEntity();
+        metaEntity.setTagType(TagType.CLOSE_TAG);
+
+        return metaEntity;
+    }
+
+    private MetaEntity createOpenTagEntity(String data) {
+
+        MetaEntity metaEntity = new MetaEntity();
+        metaEntity.setMap(parseAttributes(data));
+        metaEntity.setValue(parseName(data));
+        metaEntity.setTagType(TagType.OPEN_TAG);
+
+        return metaEntity;
+    }
+
+    private MetaEntity createSingleTagEntity(String data) {
+
+        MetaEntity metaEntity = new MetaEntity();
+        metaEntity.setMap(parseAttributes(data));
+        metaEntity.setValue(parseName(data));
+        metaEntity.setTagType(TagType.SINGLE_TAG);
+
+        return metaEntity;
+    }
+
+    private static Map<String, String> parseAttributes(String data) {
+
         Map<String, String> mapData = new HashMap<>(5);
 
         Matcher nameMatcher = ATTRIBUTE_NAME_PATTERN.matcher(data);
@@ -85,10 +113,10 @@ public class StackGenerator {
         return mapData;
     }
 
-    public String parseName(String data) {
+    private String parseName(String data) {
 
         Matcher tagNameMatcher = TAG_NAME_PATTERN.matcher(data);
-        String s=null;
+        String s = null;
         while (tagNameMatcher.find()) {
             s = tagNameMatcher.group(1);
         }

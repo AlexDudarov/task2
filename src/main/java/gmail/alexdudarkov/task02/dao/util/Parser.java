@@ -1,6 +1,8 @@
 package gmail.alexdudarkov.task02.dao.util;
 
 
+import gmail.alexdudarkov.task02.dao.exception.DAOException;
+
 import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
@@ -12,32 +14,17 @@ public class Parser {
 
     private static final String FILE_NAME = "task02.xml";
 
-    private InputStream getInputStream() {
 
-        URL urlConfig = this.getClass().getClassLoader().getResource(FILE_NAME);
-        if (urlConfig==null){
-            throw  new NullPointerException();
-        }
-        URLConnection urlConnection;
-        InputStream inputStream = null;
-
-        try {
-            urlConnection = urlConfig.openConnection();
-            inputStream = urlConnection.getInputStream();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return inputStream;
-    }
-
-    public List<String> printFile() {
+    public List<String> printFile() throws DAOException {
         InputStream inputStream = getInputStream();
         int line;
         List<String> list = new ArrayList<>();
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+
             boolean tagStart = false;
             boolean valueStart = false;
+
             StringBuilder stringBuilder = new StringBuilder();
             char c;
             do {
@@ -50,15 +37,21 @@ public class Parser {
                         valueStart = true;
                     }
                 }
+
                 if (c == '<' || line == -1) {
-                    if (!stringBuilder.toString().trim().isEmpty()) {
-                        list.add(stringBuilder.toString().trim());
+
+                    String value = stringBuilder.toString().trim();
+
+                    if (!value.isEmpty()) {
+                        list.add(value);
                     }
+
                     stringBuilder.setLength(0);
                     tagStart = true;
                 }
 
                 if (c == '>') {
+
                     stringBuilder.append(c);
                     list.add(stringBuilder.toString().trim());
                     stringBuilder.setLength(0);
@@ -79,9 +72,32 @@ public class Parser {
 
 
         } catch (IOException e) {
-            e.printStackTrace();
+          throw new DAOException(e);
         }
         return list;
+    }
+
+
+    private InputStream getInputStream() throws DAOException {
+
+        URL urlConfig = this.getClass().getClassLoader().getResource(FILE_NAME);
+
+        if (urlConfig == null) {
+            throw new DAOException("file not found");
+        }
+
+        InputStream inputStream;
+
+        try {
+
+            URLConnection urlConnection = urlConfig.openConnection();
+            inputStream = urlConnection.getInputStream();
+
+        } catch (IOException e) {
+            throw new DAOException(e);
+        }
+
+        return inputStream;
     }
 
 

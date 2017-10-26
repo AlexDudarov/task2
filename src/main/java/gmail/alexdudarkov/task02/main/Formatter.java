@@ -8,9 +8,9 @@ import java.util.Map;
 
 public class Formatter {
 
-    public String format(Entity entity){
-      String entityView=  format(entity, 0);
-      return entityView;
+    public String format(Entity entity) {
+        String entityView = format(entity, 0);
+        return entityView;
     }
 
     private String format(Entity entity, int level) {
@@ -21,7 +21,7 @@ public class Formatter {
         Map<String, String> attributes = entity.getAttributes();
         List<Entity> children = entity.getChildren();
         boolean isProperty = !(value == null) && attributes.isEmpty();
-        String tab= "";
+        String tab = "";
 
         for (int i = 0; i <= level; i++) {
 

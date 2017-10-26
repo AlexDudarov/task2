@@ -2,6 +2,7 @@ package gmail.alexdudarkov.task02.main;
 
 import gmail.alexdudarkov.task02.service.EntityService;
 import gmail.alexdudarkov.task02.service.ServiceFactory;
+import gmail.alexdudarkov.task02.service.exception.ServiceException;
 
 public class App {
 
@@ -11,9 +12,11 @@ public class App {
     public static void main( String[] args )
     {
         Formatter formatter = new Formatter();
-        System.out.println( formatter.format(entityService.getEntity()));
-       //System.out.println(entityService.getEntity());
-
+        try {
+            System.out.println( formatter.format(entityService.getEntity()));
+        } catch (ServiceException e) {
+            e.printStackTrace();
+        }
 
 
     }

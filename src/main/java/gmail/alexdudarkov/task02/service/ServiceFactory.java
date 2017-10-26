@@ -3,15 +3,17 @@ package gmail.alexdudarkov.task02.service;
 import gmail.alexdudarkov.task02.service.impl.EntityServiceImpl;
 
 public final class ServiceFactory {
+
     private static final ServiceFactory instance = new ServiceFactory();
 
     private final EntityService entityService = new EntityServiceImpl();
 
-    private ServiceFactory(){}
+    private ServiceFactory() {
+    }
 
-    public EntityService getEntityService(){
+    public EntityService getEntityService() {
 
-        return  entityService;
+        return entityService;
     }
 
     public static ServiceFactory getInstance() {
