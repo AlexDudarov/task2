@@ -24,12 +24,7 @@ public class Formatter {
 
         boolean isProperty = !(value == null) && attributes.isEmpty();
 
-        String tab = "";
-
-        for (int i = 0; i <= level; i++) {
-
-            tab = tab + '\t';
-        }
+        String tab = createIndent(level);
         sb.append(tab).append(name);
 
         if (isProperty) {
@@ -58,6 +53,18 @@ public class Formatter {
         return sb.toString();
     }
 
+
+    private String createIndent(int level) {
+        StringBuilder sb = new StringBuilder();
+
+        for (int i = 0; i <= level; i++) {
+
+            sb.append('\t');
+        }
+        return sb.toString();
+    }
+
+
     private StringBuilder formatAttributes(Map<String, String> attributes, StringBuilder sb) {
         for (Map.Entry<String, String> entry : attributes.entrySet()) {
 
@@ -65,7 +72,7 @@ public class Formatter {
             String attributeName = entry.getKey();
             String attributeValue = entry.getValue();
 
-            sb.append("\t").append(attributeName).append(" : ")
+            sb.append('\t').append(attributeName).append(" : ")
                     .append(attributeValue).append('\n');
         }
 

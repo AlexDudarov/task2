@@ -16,11 +16,10 @@ public class StackGenerator {
     private static final Pattern ATTRIBUTE_NAME_PATTERN = Pattern.compile("(\\S*)\\s*=");
     private static final Pattern ATTRIBUTE_VALUE_PATTERN = Pattern.compile("=\\s*['|\"]([^'\"]*)['|\"]");
 
-
-    private static final String OPEN_TAG = "<([A-Za-z]|_|:).*[^/]>";
-    private static final String CLOSE_TAG = "</([A-Za-z]|_|:).*>";
-    private static final String VALUE = "[^<].*";
-    private static final String SINGLE_TAG = "<([A-Za-z]|_|:).*/>";
+    private static final Pattern OPEN_TAG = Pattern.compile("<([A-Za-z]|_|:).*[^/]>");
+    private static final Pattern CLOSE_TAG = Pattern.compile("</([A-Za-z]|_|:).*>");
+    private static final Pattern VALUE = Pattern.compile("[^<].*");
+    private static final Pattern SINGLE_TAG = Pattern.compile("<([A-Za-z]|_|:).*/>");
 
 
     public List<MetaEntity> createStack(List<String> xmlData) throws DAOException {
@@ -31,28 +30,28 @@ public class StackGenerator {
 
         for (String tagData : xmlData) {
 
-            if (tagData.matches(OPEN_TAG)) {
+            if (OPEN_TAG.matcher(tagData).matches()) {
 
                 entity = createOpenTagEntity(tagData);
                 metaEntities.add(entity);
                 continue;
             }
 
-            if (tagData.matches(CLOSE_TAG)) {
+            if (CLOSE_TAG.matcher(tagData).matches()) {
 
                 entity = createCloseTagEntity();
                 metaEntities.add(entity);
                 continue;
             }
 
-            if (tagData.matches(SINGLE_TAG)) {
+            if (SINGLE_TAG.matcher(tagData).matches()) {
 
                 entity = createSingleTagEntity(tagData);
                 metaEntities.add(entity);
                 continue;
             }
 
-            if (tagData.matches(VALUE)) {
+            if (VALUE.matcher(tagData).matches()) {
 
 
                 entity = createValueEntity(tagData);

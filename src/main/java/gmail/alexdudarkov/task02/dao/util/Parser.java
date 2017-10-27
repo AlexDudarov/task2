@@ -17,22 +17,24 @@ public class Parser {
 
     public List<String> printFile() throws DAOException {
         InputStream inputStream = getInputStream();
-        int line;
-        List<String> list = new ArrayList<>();
+        List<String> tags = new ArrayList<>();
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
 
             StringBuilder stringBuilder = new StringBuilder();
-            char c;
-            do {
-                line = reader.read();
-                c = (char) line;
 
-                if (c == '<' || line == -1) {
+            char c;
+            int fileChar;
+
+            do {
+                fileChar = reader.read();
+                c = (char) fileChar;
+
+                if (c == '<' || fileChar == -1) {
                     String value = stringBuilder.toString().trim();
 
                     if (!value.isEmpty()) {
-                        list.add(value);
+                        tags.add(value);
                     }
 
                     stringBuilder.setLength(0);
@@ -43,18 +45,18 @@ public class Parser {
                 if (c == '>') {
 
                     stringBuilder.append(c);
-                    list.add(stringBuilder.toString().trim());
+                    tags.add(stringBuilder.toString().trim());
                     stringBuilder.setLength(0);
 
                 }
 
-            } while (line != -1);
+            } while (fileChar != -1);
 
 
         } catch (IOException e) {
             throw new DAOException(e);
         }
-        return list;
+        return tags;
     }
 
 
